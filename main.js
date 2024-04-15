@@ -5,31 +5,43 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Extending the Arrow Class to make vector 3 helper
 class Arrow extends THREE.ArrowHelper {
-	constructor(dir, origin, length) {
+	constructor(dir, origin, length, color, headLength, headWidth) {
 		super();
 		this.dir = dir;
 		this.origin = origin;
 		this.length = length;
+		this.color = color;
+		this.headLength = headLength;
+		this.headWidth = headWidth;
+		this.arrowActive = false;
+	}
 
+	onResize(width, height, aspect) {
+		this.setLength(this.length * (this.arrowActive ? 1.5 : 1), this.headLength * (this.arrowActive ? 1.5 : 1), this.headWidth * (this.arrowActive ? 1.5 : 1));
+		
 	}
 
 	render() {
 	}
 
-	onResize(width, height, aspect) {
-		this.arrowSize = width / 5; // 1/5 of the full width
-		this.setLength(this.arrowSize, this.arrowSize / 2, this.arrowSize / 3);
-	}
-
 	onPointerOver(e) {
-		this.setColor('hotpink');
+		this.color.set('hotpink');
+		this.color.convertSRGBToLinear();
 	}
 
 	onPointerOut(e) {
-		this.setColor('orange');
+		this.color.set('orange');
+		this.color.convertSRGBToLinear();
+	}
+
+	onClick(e) {
+		this.arrowActive = !this.arrowActive;
+		this.color = 'red';
+		console.log("arrow clicked")
 	}
 
 }
+
 
 
 
@@ -65,6 +77,7 @@ class Cube extends THREE.Mesh {
 
 	onClick(e) {
 		this.cubeActive = !this.cubeActive;
+		console.log("cube clicked")
 
 	}
 
@@ -97,15 +110,11 @@ const cube1 = new Cube()
 cube1.position.set(0, 5, 0)
 scene.add(cube1)
 
+//arrow
+const arrow1 = new Arrow(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 15), 20, new THREE.Color('orange'), 100, 100)
+scene.add(arrow1)
 
 
-
-const arrowX = new Arrow(new THREE.Vector3(6, 6, 6), new THREE.Vector3(0, 15, 0), 5)
-//const arrowY = new Arrow(new THREE.Vector3(0, 6, 0), new THREE.Vector3(0, 15, 0), 5)
-//const arrowZ = new Arrow(new THREE.Vector3(0, 0, 6), new THREE.Vector3(0, 15, 0), 5)
-scene.add(arrowX);
-//scene.add(arrowY);
-//scene.add(arrowZ);
 
 
 
