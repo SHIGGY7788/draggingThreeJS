@@ -4,21 +4,18 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 
 // Extending the Arrow Class to make vector 3 helper
-class Arrow extends THREE.ArrowHelper {
-	constructor(dir, origin, length, color, headLength, headWidth) {
+class Cylinder extends THREE.Mesh {
+	constructor() {
 		super();
-		this.dir = dir;
-		this.origin = origin;
-		this.length = length;
-		this.color = color;
-		this.headLength = headLength;
-		this.headWidth = headWidth;
-		this.arrowActive = false;
+		this.geometry = new THREE.CylinderGeometry();
+		this.material = new THREE.MeshBasicMaterial({ color: 'blue' });
+		this.cylinderSize = 0;
+		this.cylinderActive = false;
 	}
 
 	onResize(width, height, aspect) {
-		this.setLength(this.length * (this.arrowActive ? 1.5 : 1), this.headLength * (this.arrowActive ? 1.5 : 1), this.headWidth * (this.arrowActive ? 1.5 : 1));
-		
+		this.cylinderSize = width / 5; // 1/5 of the full width
+		this.scale.setScalar(this.cylinderSize * (this.cylinderActive ? 1.5 : 1));
 	}
 
 	render() {
@@ -111,7 +108,8 @@ cube1.position.set(0, 5, 0)
 scene.add(cube1)
 
 //arrow
-const arrow1 = new Arrow(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 15), 20, new THREE.Color('orange'), 100, 100)
+const arrow1 = new Arrow(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 10, new THREE.Color('orange'), 5, 2)
+arrow1.position.set(0,10,0)
 scene.add(arrow1)
 
 
