@@ -52,6 +52,19 @@ class Cube extends THREE.Mesh {
 		this.cubeSize = 0;
 		this.cubeActive = false;
 
+
+		const origin = this.position;
+
+		const length = 10;
+
+		this.Zarrow = new THREE.ArrowHelper(new THREE.Vector3(0,0,1), origin, length, 0x00ff00);
+		this.Zarrow.name = "Z_arrow";
+
+		this.Xarrow = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), origin, length, 0x0000ff);
+		this.Xarrow.name = "X_arrow";
+
+		this.Yarrow = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), origin, length, 0xff0000);
+		this.Yarrow.name = "Y_arrow";
 	}
 
 	render() {
@@ -73,9 +86,26 @@ class Cube extends THREE.Mesh {
 	}
 
 	onClick(e) {
+		if (scene.getObjectByName("Z_arrow")){
+			scene.remove(this.Zarrow);
+			scene.remove(this.Yarrow);
+			scene.remove(this.Xarrow);
+		}
+		else {
+			scene.add(this.Zarrow);
+			scene.add(this.Yarrow);
+			scene.add(this.Xarrow);
+		}
+
 		this.cubeActive = !this.cubeActive;
 		console.log("cube clicked")
 
+	}
+
+	onArrowDrag(e) {
+		if (e.object === this.arrow) {
+			console.log("Arrow is being dragged");
+		}
 	}
 
 }
@@ -107,13 +137,11 @@ const cube1 = new Cube()
 cube1.position.set(0, 5, 0)
 scene.add(cube1)
 
-//arrow
-const arrow1 = new Arrow(new THREE.Vector3(1, 0, 0), new THREE.Vector3(0, 0, 0), 10, new THREE.Color('orange'), 5, 2)
-arrow1.position.set(0,10,0)
-scene.add(arrow1)
 
 
-
+const axesHelper = new THREE.AxesHelper(5);
+axesHelper.position.set(5,5,5)
+scene.add(axesHelper);
 
 
 //Log all objects that arent cubes
@@ -188,6 +216,22 @@ window.addEventListener('click', (e) => {
 		if (hit.object.onClick) hit.object.onClick(hit)
 	})
 })
+
+let isDragging = false;
+
+window.addEventListener('pointerdown', (e) => {
+    intersects.forEach((hit) => {
+        if (hit.object.onArrowDrag) {
+            isDragging = true;
+            hit.object.onArrowDrag(hit);
+        }
+    });
+});
+
+
+window.addEventListener('pointerup', () => {
+    isDragging = false;
+});
 
 // render-loop, called 60-times/second
 function animate(t) {
